@@ -1,0 +1,17 @@
+# Query the exported Parquet marts with Trino (distributed SQL, the open-source successor to Presto).
+#   python -m warehouse.loader          # writes ./exports
+#   docker compose -f trino/docker-compose.yml up -d
+#   docker exec -it trino trino -f /etc/trino/init.sql
+#   docker exec -it trino trino --catalog lake --schema marts
+services:
+  trino:
+    image: trinodb/trino:470
+    container_name: trino
+    ports: ["8080:8080"]
+    volumes:
+      - ./catalog:/etc/trino/catalog:ro
+      - ./init.sql:/etc/trino/init.sql:ro
+      - ../exports:/data:ro
+      - trino-metastore:/metastore
+volumes:
+  trino-metastore:
